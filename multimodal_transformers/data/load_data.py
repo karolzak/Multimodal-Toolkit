@@ -392,7 +392,7 @@ def load_data(data_df,
     agg_func = partial(agg_text_columns_func, empty_text_values, replace_empty_text)
     texts_cols = get_matching_cols(data_df, text_cols_func)
     logger.info(f'Text columns: {texts_cols}')
-    texts_list = data_df[texts_cols].agg(agg_func, axis=1).tolist()
+    texts_list = data_df[texts_cols].agg(agg_func, axis=1).values.tolist()
     for i, text in enumerate(texts_list):
         texts_list[i] = f' {sep_text_token_str} '.join(text)
     logger.info(f'Raw text example: {texts_list[0]}')
