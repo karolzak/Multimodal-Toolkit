@@ -5,5 +5,6 @@ __all__ = [
     'load_data',
     'load_data_into_folds',
     'load_data_from_folder',
+    'load_train_val_test_helper',
     'TorchTabularTextDataset'
 ]
