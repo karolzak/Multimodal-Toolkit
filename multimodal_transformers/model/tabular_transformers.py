@@ -7,19 +7,35 @@ from transformers import (
     XLNetForSequenceClassification,
     XLMForSequenceClassification
 )
-from transformers.modeling_bert import BERT_INPUTS_DOCSTRING
-from transformers.modeling_roberta import ROBERTA_INPUTS_DOCSTRING
-from transformers.modeling_distilbert import DISTILBERT_INPUTS_DOCSTRING
-from transformers.modeling_albert import ALBERT_INPUTS_DOCSTRING
-from transformers.modeling_xlnet import XLNET_INPUTS_DOCSTRING
-from transformers.modeling_xlm import XLM_INPUTS_DOCSTRING
-from transformers.configuration_xlm_roberta import XLMRobertaConfig
-from transformers.file_utils import add_start_docstrings_to_callable
+from transformers.models.bert.modeling_bert import BERT_INPUTS_DOCSTRING
+from transformers.models.roberta.modeling_roberta import ROBERTA_INPUTS_DOCSTRING
+from transformers.models.distilbert.modeling_distilbert import DISTILBERT_INPUTS_DOCSTRING
+from transformers.models.albert.modeling_albert import ALBERT_INPUTS_DOCSTRING
+from transformers.models.xlnet.modeling_xlnet import XLNET_INPUTS_DOCSTRING
+from transformers.models.xlm.modeling_xlm import XLM_INPUTS_DOCSTRING
+from transformers.models.xlm_roberta.configuration_xlm_roberta import XLMRobertaConfig
 
 from .tabular_combiner import TabularFeatCombiner
 from .tabular_config import TabularConfig
 from .layer_utils import MLP, calc_mlp_dims, hf_loss_func
 
+
+def add_start_docstrings_to_callable(*docstr):
+    def docstring_decorator(fn):
+        class_name = ":class:`~transformers.{}`".format(fn.__qualname__.split(".")[0])
+        intro = "   The {} forward method, overrides the :func:`__call__` special method.".format(class_name)
+        note = r"""
+
+    .. note::
+        Although the recipe for forward pass needs to be defined within
+        this function, one should call the :class:`Module` instance afterwards
+        instead of this since the former takes care of running the
+        pre and post processing steps while the latter silently ignores them.
+        """
+        fn.__doc__ = intro + note + "".join(docstr) + (fn.__doc__ if fn.__doc__ is not None else "")
+        return fn
+
+    return docstring_decorator
 
 class BertWithTabular(BertForSequenceClassification):
     """
