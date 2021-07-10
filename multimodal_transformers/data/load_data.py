@@ -208,6 +208,86 @@ def load_data_from_folder(folder_path,
                                       debug)
 
 
+def load_data_from_df(
+        train_df, test_df,
+        text_cols,
+        tokenizer,
+        label_col,
+        label_list=None,
+        val_df=None,
+        categorical_cols=None,
+        numerical_cols=None,
+        sep_text_token_str=' ',
+        categorical_encode_type='ohe',
+        numerical_transformer_method='quantile_normal',
+        empty_text_values=None,
+        replace_empty_text=None,
+        max_token_length=None,
+        debug=False,
+    ):
+    """
+    Function to load tabular and text data from a specified pandas.DataFrame
+    Loads train, test and/or validation text and tabular data from specified
+    pandas.DataFrame objects into TorchTextDataset class and does categorical and numerical
+    data preprocessing if specified.
+    Args:
+        train_df (pandas.DataFrame): Training dataframe
+        test_df (pandas.DataFrame): Testing dataframe
+        text_cols (:obj:`list` of :obj:`str`): The column names in the dataset that contain text
+            from which we want to load
+        tokenizer (:obj:`transformers.tokenization_utils.PreTrainedTokenizer`):
+            HuggingFace tokenizer used to tokenize the input texts as specifed by text_cols
+        label_col (str): The column name of the label, for classification the column should have
+            int values from 0 to n_classes-1 as the label for each class.
+            For regression the column can have any numerical value
+        label_list (:obj:`list` of :obj:`str`, optional): Used for classification;
+            the names of the classes indexed by the values in label_col.
+        test_df (pandas.DataFrame, optional): Validation dataframe, optional
+        categorical_cols (:obj:`list` of :obj:`str`, optional): The column names in the dataset that
+            contain categorical features. The features can be already prepared numerically, or
+            could be preprocessed by the method specified by categorical_encode_type
+        numerical_cols (:obj:`list` of :obj:`str`, optional): The column names in the dataset that contain numerical features.
+            These columns should contain only numeric values.
+        sep_text_token_str (str, optional): The string token that is used to separate between the
+            different text columns for a given data example. For Bert for example,
+            this could be the [SEP] token.
+        categorical_encode_type (str, optional): Given categorical_cols, this specifies
+            what method we want to preprocess our categorical features.
+            choices: [ 'ohe', 'binary', None]
+            see encode_features.CategoricalFeatures for more details
+        numerical_transformer_method (str, optional): Given numerical_cols, this specifies
+            what method we want to use for normalizing our numerical data.
+            choices: ['yeo_johnson', 'box_cox', 'quantile_normal', None]
+            see https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html
+            for more details
+        empty_text_values (:obj:`list` of :obj:`str`, optional): specifies what texts should be considered as
+            missing which would be replaced by replace_empty_text
+        replace_empty_text (str, optional): The value of the string that will replace the texts
+            that match with those in empty_text_values. If this argument is None then
+            the text that match with empty_text_values will be skipped
+        max_token_length (int, optional): The token length to pad or truncate to on the
+            input text
+        debug (bool, optional): Whether or not to load a smaller debug version of the dataset
+    Returns:
+        :obj:`tuple` of `tabular_torch_dataset.TorchTextDataset`:
+            This tuple contains the
+            training, validation and testing sets. The val dataset is :obj:`None` if
+            val_df param is not used
+    """
+
+    return load_train_val_test_helper(
+        train_df, val_df, test_df,
+        text_cols, tokenizer, label_col,
+        label_list, categorical_cols, numerical_cols,
+        sep_text_token_str,
+        categorical_encode_type,
+        numerical_transformer_method,
+        empty_text_values,
+        replace_empty_text,
+        max_token_length,
+        debug)
+
+
 def load_train_val_test_helper(train_df,
                                val_df,
                                test_df,
